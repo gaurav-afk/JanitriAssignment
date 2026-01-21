@@ -7,11 +7,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.towerofapp.janitriassignment.data.repository.VitalRepository
+import com.towerofapp.janitriassignment.ui.screens.HomeScreen
 import com.towerofapp.janitriassignment.ui.theme.JanitriAssignmentTheme
+import com.towerofapp.janitriassignment.ui.viewmodel.VitalViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,9 +20,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             JanitriAssignmentTheme {
+                val dao = MyApp.database.vitalDao()
+                val repository = remember { VitalRepository(dao) }
+
+                val viewModel = remember {
+                    VitalViewModel(repository)
+                }
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
+                    HomeScreen(
+                        viewModel = viewModel,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -30,18 +38,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    JanitriAssignmentTheme {
-        Greeting("Android")
-    }
-}
