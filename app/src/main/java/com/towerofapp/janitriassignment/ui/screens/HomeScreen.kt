@@ -291,7 +291,7 @@ fun AddVitalDialog(
                                 systolicPressure = systolic.toInt(),
                                 diastolicPressure = diastolic.toInt(),
                                 heartRate = heartRate.toInt(),
-                                weightKg = weight.toInt(),
+                                weightKg = weight.toFloat(),
                                 babyKicksCount = kicks.toInt(),
                                 timestamp = System.currentTimeMillis()
                             )
