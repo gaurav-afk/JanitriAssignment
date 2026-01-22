@@ -10,7 +10,7 @@ data class VitalEntity(
     val systolicPressure: Int,
     val diastolicPressure: Int,
     val heartRate: Int,
-    val weightKg: Float,
+    val weightKg: Int,
     val babyKicksCount: Int,
     val timestamp: Long
 )

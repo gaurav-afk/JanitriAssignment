@@ -14,16 +14,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -41,8 +45,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.towerofapp.janitriassignment.R
 import com.towerofapp.janitriassignment.data.local.VitalEntity
 import com.towerofapp.janitriassignment.ui.viewmodel.VitalViewModel
@@ -187,7 +193,6 @@ fun VitalRow(
         )
     }
 }
-
 @Composable
 fun AddVitalDialog(
     onDismiss: () -> Unit,
@@ -195,64 +200,119 @@ fun AddVitalDialog(
 ) {
     var systolic by remember { mutableStateOf("") }
     var diastolic by remember { mutableStateOf("") }
-    var heartRate by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
     var kicks by remember { mutableStateOf("") }
+    var heartRate by remember { mutableStateOf("") }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text("Add Vital") },
-        text = {
-            Column {
-                TextField(
-                    value = systolic,
-                    onValueChange = { systolic = it },
-                    label = { Text("Systolic Pressure") }
+    val isFormValid = listOf(
+        systolic,
+        diastolic,
+        heartRate,
+        weight,
+        kicks
+    ).all { it.isNotBlank() }
+
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            shape = RoundedCornerShape(24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+
+                // Title
+                Text(
+                    text = "Add Vitals",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF6A1B9A)
                 )
-                TextField(
-                    value = diastolic,
-                    onValueChange = { diastolic = it },
-                    label = { Text("Diastolic Pressure") }
-                )
-                TextField(
-                    value = heartRate,
-                    onValueChange = { heartRate = it },
-                    label = { Text("Heart Rate") }
-                )
-                TextField(
-                    value = weight,
-                    onValueChange = { weight = it },
-                    label = { Text("Weight (kg)") }
-                )
-                TextField(
-                    value = kicks,
-                    onValueChange = { kicks = it },
-                    label = { Text("Baby Kicks Count") }
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onSave(
-                        VitalEntity(
-                            systolicPressure = systolic.toInt(),
-                            diastolicPressure = diastolic.toInt(),
-                            heartRate = heartRate.toInt(),
-                            weightKg = weight.toFloat(),
-                            babyKicksCount = kicks.toInt(),
-                            timestamp = System.currentTimeMillis()
-                        )
+
+                // BP Row
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    OutlinedTextField(
+                        value = systolic,
+                        onValueChange = { systolic = it },
+                        label = { Text("Sys BP") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.weight(1f)
+                    )
+                    OutlinedTextField(
+                        value = diastolic,
+                        onValueChange = { diastolic = it },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        label = { Text("Dia BP") },
+                        modifier = Modifier.weight(1f)
                     )
                 }
-            ) {
-                Text("Save")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
+
+                // Weight
+                OutlinedTextField(
+                    value = weight,
+                    onValueChange = { weight = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    label = { Text("Weight (in kg)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Baby Kicks
+                OutlinedTextField(
+                    value = kicks,
+                    onValueChange = { kicks = it },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    label = { Text("Baby Kicks") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Heart Rate
+                OutlinedTextField(
+                    value = heartRate,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    onValueChange = { heartRate = it },
+                    label = { Text("Heart Rate") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Submit Button
+                Button(
+                    enabled = isFormValid,
+                    onClick = {
+                        onSave(
+                            VitalEntity(
+                                systolicPressure = systolic.toInt(),
+                                diastolicPressure = diastolic.toInt(),
+                                heartRate = heartRate.toInt(),
+                                weightKg = weight.toInt(),
+                                babyKicksCount = kicks.toInt(),
+                                timestamp = System.currentTimeMillis()
+                            )
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF9C4DCC)
+                    )
+                ) {
+                    Text(
+                        text = "Submit",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
             }
         }
-    )
+    }
 }
