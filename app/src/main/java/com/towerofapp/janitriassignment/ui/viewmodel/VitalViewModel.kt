@@ -30,5 +30,4 @@ class VitalViewModel(private val repository: VitalRepository) : ViewModel() {
             repository.addVitals(vital = vital)
         }
     }
-
 }

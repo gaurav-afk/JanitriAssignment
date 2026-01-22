@@ -1,5 +1,6 @@
 package com.towerofapp.janitriassignment
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,6 +19,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(
+                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                100
+            )
+        }
+
         setContent {
             JanitriAssignmentTheme {
                 val dao = MyApp.database.vitalDao()
@@ -27,12 +35,11 @@ class MainActivity : ComponentActivity() {
                     VitalViewModel(repository)
                 }
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    HomeScreen(
-                        viewModel = viewModel,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                HomeScreen(
+                    viewModel = viewModel,
+                    modifier = Modifier.fillMaxSize()
+                )
+
             }
         }
     }

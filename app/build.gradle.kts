@@ -49,8 +49,12 @@ dependencies {
 
     // roomDb
     implementation("androidx.room:room-runtime:2.6.1")
+    implementation(libs.androidx.ui.graphics)
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+
+    // work-manager
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
